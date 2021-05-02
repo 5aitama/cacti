@@ -1,6 +1,6 @@
 <p align="center">
     <img src="images/logo.svg" alt="Logo" height="125">
-    <h2 align="center">Cacti</h2>
+    <h3 align="center">Cacti</h3>
     <p align="center">
         A little game engine written in <a href="https://www.rust-lang.org/">Rust</a>.
         <br />
