@@ -12,7 +12,7 @@ pub struct ComponentArray<T: Any> {
     component_to_entity: Vec<Entity>,
 
     /// The component of each entities.
-    components: Vec<T>,
+    components: Vec<Option<T>>,
 }
 
 impl<T: Any> ComponentArray<T> {
@@ -36,8 +36,14 @@ impl<T: Any> ComponentArray<T> {
         }
     }
 
-    pub fn get_components_ref(&self) -> &Vec<T> {
+    /// Get components array reference.
+    pub fn components_ref(&self) -> &Vec<Option<T>> {
         &self.components
+    }
+
+    /// Get components array mutable reference.
+    pub fn components_mut(&mut self) -> &mut Vec<Option<T>> {
+        &mut self.components
     }
     
     /// Add a component to an entity.
@@ -53,7 +59,7 @@ impl<T: Any> ComponentArray<T> {
 
         let component_index = self.components.len();
 
-        self.components.push(component);
+        self.components.push(Some(component));
         self.entity_to_component[*entity] = component_index;
         self.component_to_entity[component_index] = *entity;
 
@@ -69,6 +75,7 @@ impl<T: Any> ComponentArray<T> {
         if *entity > self.components.capacity() {
             return false
         }
+
         // The last component index
         let last_component_index = self.components.len() - 1;
         // The current component index (component that we want to remove...)
@@ -93,16 +100,16 @@ impl<T: Any> ComponentArray<T> {
     /// 
     /// # Arguments
     /// * `entity` - The entity that own the component.
-    pub fn get_component_ref(&self, entity: &Entity) -> &T {
-        &self.components[self.entity_to_component[*entity]]
+    pub fn get_component_ref(&self, entity: &Entity) -> Option<&T> {
+        Some(self.components[self.entity_to_component[*entity]].as_ref()?)
     }
 
     /// Get mutable reference to an entity component.
     /// 
     /// # Arguments
     /// * `entity` - The entity that own the component.
-    pub fn get_component_mut(&mut self, entity: &Entity) -> &mut T {
-        &mut self.components[self.entity_to_component[*entity]]
+    pub fn get_component_mut(&mut self, entity: &Entity) -> Option<&mut T> {
+        Some(self.components[self.entity_to_component[*entity]].as_mut()?)
     }
 
 }

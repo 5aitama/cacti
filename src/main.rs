@@ -2,44 +2,45 @@
 pub mod core;
 use crate::core::{
     world_state::WorldState, 
-    component_tuple::ComponentTuple
+    component_tuple::ComponentTuple,
 };
 
-struct Vec2(f32, f32);
+// Represent 2D coordinates (x, y)
+struct Position2D(f32, f32);
 
-struct Cube {
-    position: Vec2,
-}
+// Represent RGBA color.
+struct Color(f32, f32, f32, f32);
 
-struct Sphere {
-    position: Vec2,
-}
+struct TagCube;
 
-fn move_cube_up(cube: &mut Cube) {
-    cube.position.1 += 1.0;
+fn move_cube_sys(world_state: &mut WorldState) {
+    for entity in <(TagCube, Position2D)>::get_entities(&world_state).iter() {
+        let mut position2_d = world_state.get_component_mut::<Position2D>(&entity).unwrap();
+        position2_d.0 += 6.0;
+    }
 }
 
 fn main() {
 
     let mut world_state = WorldState::new(64, 64, 64);
+
+    // Create an entity and add some components to it !
     let entity = world_state.create_entity().unwrap();
+    world_state.add_component(&entity, Position2D(0.0, 0.0));
+    world_state.add_component(&entity, Color(1.0, 0.0, 0.0, 0.0));
+    world_state.add_component(&entity, TagCube);
 
-    world_state.add_component(&entity, Cube { position: Vec2(0., 0.) });
-    world_state.add_component(&entity, Sphere { position: Vec2(0., 0.) });
+    // Here we execute some systems...
+    move_cube_sys(&mut world_state);
 
-    move_cube_up(world_state.get_component_mut::<Cube>(&entity).unwrap());
+    // Print all entities that have the `Position2D` & `Color` components !
+    for entity in <(Position2D, Color)>::get_entities(&world_state).iter() {
+        let position2_d = world_state.get_component_ref::<Position2D>(&entity).unwrap();
+        let color = world_state.get_component_ref::<Color>(&entity).unwrap();
 
-    // The components that we want to retrieve
-    for component_array in world_state.get_components(&<(Cube, Sphere)>::to_vec()).iter() {
-        let components = component_array.get_components_ref();
-        for component in components.iter() {
-            match component.downcast_ref::<Cube>() {
-                Some(r) => println!("Cube position: x:{} y:{}", r.position.0, r.position.1),
-                None => match component.downcast_ref::<Sphere>() {
-                    Some(r) => println!("Sphere position: x:{}, y:{}", r.position.0, r.position.1),
-                    _ => (),
-                }
-            }
-        }
+        println!("Cube position: x:{} y:{}", position2_d.0, position2_d.1);
+        println!("color: (r: {}, g: {}, b: {}, a: {})", color.0, color.1, color.2, color.3);
     }
 }
+
+
