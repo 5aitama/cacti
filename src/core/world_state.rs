@@ -17,7 +17,7 @@ pub struct WorldState {
 
     /// Entities components in the world.
     component_arrays: Vec<ComponentArray<Box<dyn Any>>>,
-
+    
     // Hashmap that contains the id of each type of components.
     component_arrays_typeid_id: HashMap<TypeId, usize>,
 

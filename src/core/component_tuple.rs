@@ -1,3 +1,4 @@
+use std::any::{ TypeId };
 use crate::core::entity::Entity;
 use crate::WorldState;
 
@@ -10,7 +11,7 @@ macro_rules! component_tuple {
         impl<$($name: std::any::Any),+> ComponentTuple for ($($name,)+)
         {
             fn get_entities(world_state: &WorldState) -> Vec<Entity> {
-                let types = vec![$(std::any::TypeId::of::<$name>()),+];
+                let types = vec![$(TypeId::of::<$name>()),+];
                 world_state.get_entities_with_types(types)
             }
         }
@@ -29,4 +30,3 @@ component_tuple! { A B C D E F G H I }
 component_tuple! { A B C D E F G H I J }
 component_tuple! { A B C D E F G H I J K }
 component_tuple! { A B C D E F G H I J K L }
-
