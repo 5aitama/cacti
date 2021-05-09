@@ -132,7 +132,7 @@ impl WorldState {
         Some(self.component_arrays[*self.component_arrays_typeid_id.get(&key)?].get_component_mut(entity)?.downcast_mut::<T>()?)
     }
 
-    pub fn get_type_id(&self, t: &TypeId) -> Option<&usize> {
+    fn get_type_id(&self, t: &TypeId) -> Option<&usize> {
         Some(self.component_arrays_typeid_id.get(&t)?)
     }
 

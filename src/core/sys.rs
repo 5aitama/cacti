@@ -1,4 +1,5 @@
-use crate::WorldState;
+
+use crate::core::world_state::WorldState;
 
 pub trait Sys {
     /// Called once after all system was registred.

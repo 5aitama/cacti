@@ -1,9 +1,13 @@
-use std::any::{ TypeId };
-use crate::core::entity::Entity;
-use crate::WorldState;
+use std::any::TypeId;
+
+use crate::core::{
+    entity::Entity,
+    world_state::WorldState,
+};
 
 pub trait ComponentTuple {
     fn get_entities(world_state: &WorldState) -> Vec<Entity>;
+    fn get_single_entity(world_state: &WorldState) -> Option<Entity>;
 }
 
 macro_rules! component_tuple {
@@ -13,6 +17,15 @@ macro_rules! component_tuple {
             fn get_entities(world_state: &WorldState) -> Vec<Entity> {
                 let types = vec![$(TypeId::of::<$name>()),+];
                 world_state.get_entities_with_types(types)
+            }
+
+            fn get_single_entity(world_state: &WorldState) -> Option<Entity> {
+                let entities = Self::get_entities(&world_state);
+                if entities.len() == 0 {
+                    None
+                } else {
+                    Some(Self::get_entities(&world_state)[0])
+                }
             }
         }
     };
