@@ -30,7 +30,7 @@ Here's why:
 
 <br />
 
-<h2 align="center">Animate color gradient</h2>
+<h3 align="center">Animate color gradient</h3>
 <p align="center">
     <img src="images/color_gradient.png" alt="Logo">
 </p>
