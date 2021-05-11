@@ -20,7 +20,7 @@ impl<T: Any> ComponentArray<T> {
     /// 
     /// # Arguments
     /// * `max_components` - The maximum components can be store the `ComponentArray`.
-    pub fn new(max_components: u32) -> ComponentArray<T> {
+    pub fn new(max_components: u32) -> Self {
         let mut etc = Vec::<usize>::with_capacity(max_components as usize);
         let mut cte = Vec::<usize>::with_capacity(max_components as usize);
 
@@ -29,7 +29,7 @@ impl<T: Any> ComponentArray<T> {
             cte.push(0);
         }
 
-        ComponentArray {
+        Self {
             entity_to_component: etc,
             component_to_entity: cte,
             components: Vec::with_capacity(max_components as usize),

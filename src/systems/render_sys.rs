@@ -18,7 +18,6 @@ impl Sys for RenderSys {
         for entity in <(Mesh2D,)>::get_entities(&world_state).iter() {
             let m = world_state.get_component_mut::<Mesh2D>(&entity).unwrap();
             m.draw();
-            // println!("Vertex amount: {}", m.vertices.len());
         }
     }
 }
