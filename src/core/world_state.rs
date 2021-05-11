@@ -25,7 +25,7 @@ pub struct WorldState {
     max_components_per_type: u32,
 }
 
-impl WorldState {
+impl<'a> WorldState {
     /// Create new `WorldState`
     /// 
     /// # Arguments

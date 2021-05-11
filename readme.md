@@ -22,3 +22,16 @@ Here's why:
 * Your time should be focused on creating something amazing. A project that solves a problem and helps others
 * You shouldn't be doing the same tasks over and over like creating a game engine from scratch
 * You want the lowest code abstraction !!
+
+<br />
+<br />
+
+<h1 align="center">Exemples</h1>
+
+<br />
+
+<h2 align="center">Animate color gradient</h2>
+<p align="center">
+    <img src="images/color_gradient.png" alt="Logo">
+</p>
+<pre align="center"><code>cargo run --bin color_gradient</code></pre>

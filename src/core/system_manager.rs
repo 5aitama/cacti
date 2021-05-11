@@ -34,7 +34,9 @@ impl SystemManager {
         self.smc_entity = world_state.create_entity().unwrap();
         world_state.add_component(&self.smc_entity, SystemManagerComponent { shutdown: false });
 
-        for sys in self.systems.iter() { sys.on_start(world_state) }
+        for sys in self.systems.iter() { 
+            sys.on_start(world_state) 
+        }
     }
 
     /// Update all system.
@@ -44,7 +46,10 @@ impl SystemManager {
             return false
         }
 
-        for sys in self.systems.iter() { sys.on_update(world_state) }
+        for sys in self.systems.iter() { 
+            sys.on_update(world_state) 
+        }
+
         true
     }
 }

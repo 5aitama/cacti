@@ -15,9 +15,19 @@ use crate::components::{
     window::Window,
 };
 
-pub struct WindowSys;
+pub struct WindowSys {
+    title: &'static str,
+    size: (u32, u32),
+}
 
 impl WindowSys {
+
+    pub fn new(title: &'static str, size: (u32, u32)) -> Self {
+        Self {
+            title,
+            size,
+        }
+    }
 
     fn process_events(&self, window_component: &mut Window) {
         for (_, event) in glfw::flush_messages(&window_component.event) {
@@ -46,11 +56,8 @@ impl Sys for WindowSys {
         #[cfg(target_os = "macos")]
         glfw.window_hint(glfw::WindowHint::OpenGlForwardCompat(true));
 
-        let size = (800u32, 600u32);
-        let title = "My window";
-
         let (mut window, events) = glfw
-            .create_window(size.0, size.1, title, glfw::WindowMode::Windowed)
+            .create_window(self.size.0, self.size.1, self.title, glfw::WindowMode::Windowed)
             .expect("Failed to create GLFW Window");
 
         window.make_current();
@@ -61,11 +68,11 @@ impl Sys for WindowSys {
         gl::load_with(|symbol| window.get_proc_address(symbol) as *const _);
 
         let window_component = Window {
-            size: size,
-            title: String::from(title),
-            event: events,
-            raw: window,
-            glfw: glfw,
+            size:   self.size,
+            title:  String::from(self.title),
+            event:  events,
+            raw:    window,
+            glfw:   glfw,
         };
 
         let e = world_state.create_entity().unwrap();
@@ -79,14 +86,6 @@ impl Sys for WindowSys {
 
                 if !window_component.raw.should_close() {
                     self.process_events(&mut window_component);
-
-                    unsafe {
-                        gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
-                        gl::ClearColor(0.1, 0.1, 0.1, 1.);
-        
-                        window_component.raw.swap_buffers();
-                        window_component.glfw.poll_events();
-                    }
                 } else {
                     match <(SystemManagerComponent,)>::get_single_entity(&world_state) {
                         Some(e) => {
