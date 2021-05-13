@@ -1,4 +1,4 @@
-use crate::core::gl::shader::Shader;
+use crate::core::{gl::shader::Shader, world::EntityComponentManager};
 
 use cgmath::{
     Vector2,
@@ -6,9 +6,10 @@ use cgmath::{
 };
 
 use crate::core::{
-    sys::Sys,
-    world_state::WorldState,
-    component_tuple::ComponentTuple,
+    sys::Sys, 
+    world::{
+        EntitySelector,
+    }
 };
 
 use crate::components::{
@@ -20,8 +21,8 @@ use crate::components::{
 pub struct ProceduralSquareSys;
 impl Sys for ProceduralSquareSys {
     
-    fn on_start(&self, world_state: &mut WorldState) {
-        let e = world_state.create_entity().unwrap();
+    fn on_start(&self, world: &mut EntityComponentManager) {
+        let e = world.create_entity().unwrap();
 
         let shader = Shader::new("./shaders/colorfull/vert.glsl", "./shaders/colorfull/frag.glsl").ok().unwrap();
 
@@ -39,13 +40,13 @@ impl Sys for ProceduralSquareSys {
 
         let mesh2d = Mesh2D::new(vertices, indices, shader, false);
 
-        world_state.add_component(&e, mesh2d);
+        world.add_component(&e, mesh2d);
     }
 
-    fn on_update(&self, world_state: &mut WorldState) {
+    fn on_update(&self, world: &mut EntityComponentManager) {
         // Retrieve the window component from the window entity...
-        let window_entity = <(Window,)>::get_single_entity(world_state).unwrap();
-        let window = world_state.get_component_ref::<Window>(&window_entity).unwrap();
+        let window_entity = <(Window,)>::query_first_from(world).unwrap();
+        let window = world.get_component::<Window>(&window_entity).unwrap();
 
         // Get time and resolution from the window
         let time = window.glfw.get_time() as f32;
@@ -53,8 +54,8 @@ impl Sys for ProceduralSquareSys {
 
         // set the time and resolution value to the shader of all entities
         // that have the Mesh2D component !
-        for e in <(Mesh2D,)>::get_entities(world_state).iter() {
-            let mesh = world_state.get_component_ref::<Mesh2D>(&e).unwrap();
+        for e in <(Mesh2D,)>::query_from(world) {
+            let mesh = world.get_component::<Mesh2D>(&e).unwrap();
 
             mesh.shader.set_float("time", time);
             mesh.shader.set_vec2("screen_resolution", &[Vector2::new(res.0 as f32, res.1 as f32)]);

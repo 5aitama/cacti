@@ -1,6 +1,5 @@
 use cacti::core::{
-    world_state::WorldState, 
-    system_manager::SystemManager,
+    world::World,
 };
 
 use cacti::systems::{
@@ -16,21 +15,12 @@ extern crate glfw;
 
 fn main() {
 
-    let mut world_state = WorldState::new(64, 64, 64);
-    let mut sys_manager = SystemManager::new(5);
+    let mut world = World::new(64, 64, 64, 5);
+    world.add_system(BeforeRenderSys);
+    world.add_system(RenderSys);
+    world.add_system(AfterRenderSys);
 
-    sys_manager.register(BeforeRenderSys);
-    sys_manager.register(RenderSys);
-    sys_manager.register(AfterRenderSys);
-
-    sys_manager.register(WindowSys::new("Color Gradient", (800, 600)));
-    sys_manager.register(ProceduralSquareSys);
-
-    sys_manager.init(&mut world_state);
-
-    loop {
-        if !sys_manager.update(&mut world_state) {
-            break;
-        }
-    }
+    world.add_system(WindowSys::new("Color Gradient", (800, 600)));
+    world.add_system(ProceduralSquareSys);
+    world.start_loop()
 }

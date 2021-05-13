@@ -2,11 +2,8 @@
 extern crate gl;
 extern crate glfw;
 
-use crate::core::{
-    sys::Sys,
-    world_state::WorldState,
-    component_tuple::ComponentTuple,
-};
+use crate::core::{sys::Sys, world::{EntityComponentManager, EntitySelector}};
+
 
 use crate::components::{
     window::Window,
@@ -15,13 +12,11 @@ use crate::components::{
 pub struct BeforeRenderSys;
 
 impl Sys for BeforeRenderSys {
-    
-    fn on_start(&self, _: &mut WorldState) { }
 
-    fn on_update(&self, world_state: &mut WorldState) {
-        match <(Window,)>::get_single_entity(&world_state) {
+    fn on_update(&self, world: &mut EntityComponentManager) {
+        match <(Window,)>::query_first_from(&world) {
             Some(entity) => {
-                let window_component = world_state.get_component_ref::<Window>(&entity).unwrap();
+                let window_component = world.get_component::<Window>(&entity).unwrap();
 
                 if !window_component.raw.should_close() {
                     unsafe {

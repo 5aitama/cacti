@@ -4,18 +4,30 @@ use gl::types::{
     GLsizei,
     GLsizeiptr,
 };
+
 use cgmath::{
     Vector2,
     Vector3,
 };
 
+/// A two dimensional vertex representation.
 pub struct Vertex2D {
+    /// The vertex position.
     pub pos:    Vector2<f32>,
+    
+    /// The vertex normal.
     pub norm:   Vector2<f32>,
+
+    /// The vertex uv coordinates.
     pub uv:     Vector2<f32>,
 }
 
 impl Vertex2D {
+    /// Create new `Vertex2D`
+    /// # Arguments
+    /// * `pos` - The vertex position.
+    /// * `norm` - The vertex normal.
+    /// * `uv` - The vertex uv coordinates.
     pub fn new(pos: Vector2<f32>, norm: Vector2<f32>, uv: Vector2<f32>) -> Self {
         Self {
             pos,

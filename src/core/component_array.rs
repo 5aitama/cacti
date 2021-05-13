@@ -20,9 +20,9 @@ impl<T: Any> ComponentArray<T> {
     /// 
     /// # Arguments
     /// * `max_components` - The maximum components can be store the `ComponentArray`.
-    pub fn new(max_components: u32) -> Self {
-        let mut etc = Vec::<usize>::with_capacity(max_components as usize);
-        let mut cte = Vec::<usize>::with_capacity(max_components as usize);
+    pub fn new(max_components: usize) -> Self {
+        let mut etc = Vec::<usize>::with_capacity(max_components);
+        let mut cte = Vec::<usize>::with_capacity(max_components);
 
         for _ in 0..max_components {
             etc.push(0);
@@ -32,18 +32,8 @@ impl<T: Any> ComponentArray<T> {
         Self {
             entity_to_component: etc,
             component_to_entity: cte,
-            components: Vec::with_capacity(max_components as usize),
+            components: Vec::with_capacity(max_components),
         }
-    }
-
-    /// Get components array reference.
-    pub fn components_ref(&self) -> &Vec<Option<T>> {
-        &self.components
-    }
-
-    /// Get components array mutable reference.
-    pub fn components_mut(&mut self) -> &mut Vec<Option<T>> {
-        &mut self.components
     }
     
     /// Add a component to an entity.
@@ -100,7 +90,7 @@ impl<T: Any> ComponentArray<T> {
     /// 
     /// # Arguments
     /// * `entity` - The entity that own the component.
-    pub fn get_component_ref(&self, entity: &Entity) -> Option<&T> {
+    pub fn get_component(&self, entity: &Entity) -> Option<&T> {
         Some(self.components[self.entity_to_component[*entity]].as_ref()?)
     }
 
@@ -112,4 +102,7 @@ impl<T: Any> ComponentArray<T> {
         Some(self.components[self.entity_to_component[*entity]].as_mut()?)
     }
 
+    pub fn get_entities(&self) -> &Vec<Entity> {
+        &self.entity_to_component
+    }
 }

@@ -2,15 +2,15 @@
 extern crate gl;
 extern crate glfw;
 
-use crate::components::smc::SystemManagerComponent;
+use crate::{components::smc::SystemManagerComponent, core::world::EntityComponentManager};
 use self::glfw::{Action, Context, Key};
 
 use crate::core::{
-    sys::Sys,
-    world_state::WorldState,
-    component_tuple::ComponentTuple,
+    sys::Sys, 
+    world::{
+        EntitySelector,
+    }
 };
-
 use crate::components::{
     window::Window,
 };
@@ -47,7 +47,7 @@ impl WindowSys {
 
 impl Sys for WindowSys {
     
-    fn on_start(&self, world_state: &mut WorldState) {
+    fn on_start(&self, world: &mut EntityComponentManager) {
         let mut glfw = glfw::init(glfw::FAIL_ON_ERRORS).unwrap();
 
         glfw.window_hint(glfw::WindowHint::ContextVersion(4, 1));
@@ -75,21 +75,21 @@ impl Sys for WindowSys {
             glfw:   glfw,
         };
 
-        let e = world_state.create_entity().unwrap();
-        world_state.add_component(&e, window_component);
+        let e = world.create_entity().unwrap();
+        world.add_component(&e, window_component);
     }
 
-    fn on_update(&self, world_state: &mut WorldState) {
-        match <(Window,)>::get_single_entity(&world_state) {
+    fn on_update(&self, world: &mut EntityComponentManager) {
+        match <(Window,)>::query_first_from(&world) {
             Some(entity) => {
-                let mut window_component = world_state.get_component_mut::<Window>(&entity).unwrap();
+                let mut window_component = world.get_component_mut::<Window>(&entity).unwrap();
 
                 if !window_component.raw.should_close() {
                     self.process_events(&mut window_component);
                 } else {
-                    match <(SystemManagerComponent,)>::get_single_entity(&world_state) {
+                    match <(SystemManagerComponent,)>::query_first_from(&world) {
                         Some(e) => {
-                            let mut smc = world_state.get_component_mut::<SystemManagerComponent>(&e).unwrap();
+                            let mut smc = world.get_component_mut::<SystemManagerComponent>(&e).unwrap();
                             smc.shutdown = true;
                         },
                         None => {},

@@ -1,9 +1,5 @@
 
-use crate::core::{
-    sys::Sys,
-    world_state::WorldState,
-    component_tuple::ComponentTuple,
-};
+use crate::core::{sys::Sys, world::{EntityComponentManager, EntitySelector}};
 
 use crate::components::{ 
     tags::cube::TagCube, 
@@ -13,14 +9,12 @@ use crate::components::{
 pub struct MoveCubeSys;
 
 impl Sys for MoveCubeSys {
-    fn on_start(&self, _: &mut WorldState) { }
-    
-    fn on_update(&self, world_state: &mut WorldState) {
 
+    fn on_update(&self, ecm: &mut EntityComponentManager) {
         // Iterate over all entities that have `TagCube` and `Position2D` components
-        for entity in <(TagCube, Position2D)>::get_entities(&world_state).iter() {
+        for entity in <(TagCube, Position2D)>::query_from(&ecm) {
             // Get mutable reference of `Position2D` component from the entity...
-            let mut position2_d = world_state.get_component_mut::<Position2D>(&entity).unwrap();
+            let mut position2_d = ecm.get_component_mut::<Position2D>(&entity).unwrap();
             // Modify the `Position2D` component :)
             position2_d.0 += 6.0;
         }

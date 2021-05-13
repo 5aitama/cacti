@@ -1,8 +1,7 @@
 
-use crate::components::smc::SystemManagerComponent;
+use crate::{components::smc::SystemManagerComponent, core::world::{EntityComponentManager}};
 use crate::core::{
     sys::Sys,
-    world_state::WorldState,
     entity::Entity,
 };
 
@@ -29,25 +28,25 @@ impl SystemManager {
     }
 
     /// Init all system.
-    /// * `world_state` - The world state.
-    pub fn init(&mut self, world_state: &mut WorldState) {
-        self.smc_entity = world_state.create_entity().unwrap();
-        world_state.add_component(&self.smc_entity, SystemManagerComponent { shutdown: false });
+    /// * `world` - The world state.
+    pub fn init(&mut self, world: &mut EntityComponentManager) {
+        self.smc_entity = world.create_entity().unwrap();
+        world.add_component(&self.smc_entity, SystemManagerComponent { shutdown: false });
 
         for sys in self.systems.iter() { 
-            sys.on_start(world_state) 
+            sys.on_start(world) 
         }
     }
 
     /// Update all system.
-    /// * `world_state` - The world state.
-    pub fn update(&mut self, world_state: &mut WorldState) -> bool {
-        if world_state.get_component_ref::<SystemManagerComponent>(&self.smc_entity).unwrap().shutdown {
+    /// * `world` - The world state.
+    pub fn update(&mut self, world: &mut EntityComponentManager) -> bool {
+        if world.get_component::<SystemManagerComponent>(&self.smc_entity).unwrap().shutdown {
             return false
         }
 
         for sys in self.systems.iter() { 
-            sys.on_update(world_state) 
+            sys.on_update(world) 
         }
 
         true
